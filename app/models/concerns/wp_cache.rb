@@ -118,9 +118,6 @@ module WpCache
       logger.warn "Could not unpublish #{self} with id #{wp_id}, no record with that id was found."
     end
 
-
-    private
-
     #
     # Convenience method for calling the WP API.
     #
@@ -129,12 +126,8 @@ module WpCache
       # TODO (dunyakirkali) pass filter through args to get_from_wp_api
       posts_per_page = (ENV['PER_PAGE'].to_i == -1 ? -1 : ENV['PER_PAGE'].to_i)
       base = WpConnector.configuration.wordpress_url
-      unless paginated_models.include?(wp_type)
-        url = "#{base}?json_route=/#{route}&filter[posts_per_page]=-1"
-      else
-        url = "#{base}?json_route=/#{route}&filter[posts_per_page]=#{posts_per_page}&page=#{page}"
-      end
-      Rails.logger.info url
+      url = "#{base}/wp-json/wp/v2/#{route}"
+      puts "Grabbing from WP: #{url}"
       response = Faraday.get url
       # If the response status is not 2xx or 5xx then raise an exception since then no retries needed.
       unless response.success? || (response.status >= 500 && response.status <= 599)
@@ -142,6 +135,8 @@ module WpCache
       end
       JSON.parse(response.body)
     end
+
+    private
 
     #
     # List of paginated models
