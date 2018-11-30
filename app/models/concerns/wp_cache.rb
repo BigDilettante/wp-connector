@@ -126,7 +126,7 @@ module WpCache
       # TODO (dunyakirkali) pass filter through args to get_from_wp_api
       posts_per_page = (ENV['PER_PAGE'].to_i == -1 ? -1 : ENV['PER_PAGE'].to_i)
       base = WpConnector.configuration.wordpress_url
-      url = "#{base}/wp-json/wp/v2/#{route}"
+      url = "#{base}/#{route}"
       puts "Grabbing from WP: #{url}"
       response = Faraday.get url
       # If the response status is not 2xx or 5xx then raise an exception since then no retries needed.
