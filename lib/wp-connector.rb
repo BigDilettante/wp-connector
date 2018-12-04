@@ -15,6 +15,6 @@ module WpConnector
   end
 
   class Configuration
-    attr_accessor :wordpress_url, :wp_connector_api_key, :wp_api_paginated_models
+    attr_accessor :wordpress_url, :wp_connector_api_key, :wp_api_paginated_models, :wordpress_basic_auth
   end
 end

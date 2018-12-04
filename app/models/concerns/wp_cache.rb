@@ -127,8 +127,14 @@ module WpCache
       posts_per_page = (ENV['PER_PAGE'].to_i == -1 ? -1 : ENV['PER_PAGE'].to_i)
       base = WpConnector.configuration.wordpress_url
       url = "#{base}/#{route}"
-      puts "Grabbing from WP: #{url}"
-      response = Faraday.get url
+      puts "Faraday is grabbing data from WordPress: #{url}"
+      conn  = Faraday.new({ssl: {verify: false}})
+      if WpConnector.configuration.wordpress_basic_auth
+        login = WpConnector.configuration.wordpress_basic_auth[:login]
+        password = WpConnector.configuration.wordpress_basic_auth[:password]
+        conn.basic_auth(login, password)
+      end
+      response = conn.get url
       # If the response status is not 2xx or 5xx then raise an exception since then no retries needed.
       unless response.success? || (response.status >= 500 && response.status <= 599)
         fail Exceptions::WpApiResponseError, "WP-API #{url} responded #{response.status} #{response.body}"
